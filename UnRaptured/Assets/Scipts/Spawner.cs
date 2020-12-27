@@ -4,15 +4,61 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	public GameObject player;
+	public GameObject enemies;
+	public float startRate = 0.001f;
+	public float rateGrowth = 0.01f;
+	public float spawnInnerRadius = 10f;
+	public float spawnOuterRadius = 15f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	public int spawnLimit = 100;
+	private int spawned = 0;
+
+	private float t;
+	private float rate;
+
+	void Awake()
+	{
+		rate = startRate;
+	}
+
+	// Start is called before the first frame update
+	void Start()
+	{
+		if(player == null)
+		{
+			Debug.Log("SPAWNER REQUIRES PLAYER");
+			Application.Quit();
+		}
+		else if(enemies == null)
+		{
+			Debug.Log("SPAWNER REQUIRES ENEMY TYPE");
+			Application.Quit();
+		}
+	}
+
+	// Update is called once per frame
+	void Update()
+	{
+		if(t * rate >= 1)
+		{
+			SpawnAngel();
+		}
+		t += 1 * rateGrowth;
+	}
+
+	void SpawnAngel()
+	{
+		if(spawned >= spawnLimit)
+			return;
+		Vector3 point = Random.insideUnitCircle.normalized;
+		Vector3 location = (point * spawnInnerRadius) + Random.value * 
+			((point * spawnOuterRadius) - (point * spawnInnerRadius));
+		var temp = location.y;
+		location.y = location.z;
+		location.z = temp;
+
+		Instantiate(enemies, location, Quaternion.identity);
+		spawned++;
+	}
 }

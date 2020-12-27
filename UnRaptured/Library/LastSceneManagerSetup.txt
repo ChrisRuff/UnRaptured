@@ -1,9 +1,5 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/testScene.unity
-=======
 - path: Assets/Scenes/Test Scene.unity
->>>>>>> feat-map
   isLoaded: 1
   isActive: 1
   isSubScene: 0

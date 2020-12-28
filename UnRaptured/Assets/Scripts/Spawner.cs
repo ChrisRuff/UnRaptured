@@ -11,6 +11,8 @@ public class Spawner : MonoBehaviour
 	public float spawnOuterRadius = 15f;
 
 	private GameObject player;
+	private Player p;
+
 	public int spawnLimit = 100;
 	private int spawned = 0;
 
@@ -41,6 +43,8 @@ public class Spawner : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		if(spawned >= spawnLimit)
+			return;
 		if(t * rate >= 1)
 		{
 			SpawnAngel();
@@ -51,8 +55,6 @@ public class Spawner : MonoBehaviour
 	void SpawnAngel()
 	{
 		Debug.Log("SPAWNING");
-		if(spawned >= spawnLimit)
-			return;
 		Vector3 point = Random.insideUnitCircle.normalized;
 		Vector3 location = (point * spawnInnerRadius) + Random.value * 
 			((point * spawnOuterRadius) - (point * spawnInnerRadius));

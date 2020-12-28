@@ -4,7 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
+<<<<<<< Updated upstream
   - Enemy
+=======
+  - UpgradeStation
+  - UpgradeCanvas
+>>>>>>> Stashed changes
   layers:
   - Default
   - TransparentFX

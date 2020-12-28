@@ -302,20 +302,19 @@ public class Player : MonoBehaviour
 	}
 	#endregion
 
-
-	#region SHOOTINGBLOCK
-	void HandleShooting()
-	{
-		if (Input.GetKeyDown(KeyCode.Mouse0))
-		{
-			weapon.Attack();
-		}
-	}
-	#endregion
+    public void IncreaseSpeed()
+    {
+        speed += 100;
+    }
 
 	public void Sacrifice()
 	{
 		points++;
 		pointsUI.text = points.ToString();
 	}
+    public void IncreaseJump()
+    {
+        jumpHeight += 10;
+    }
+
 }

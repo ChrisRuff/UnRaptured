@@ -17,17 +17,16 @@ public class Sacrifice : MonoBehaviour
 	{
 		if(Input.GetButtonDown("Interact"))
 		{
-			if(Vector3.Distance(player.transform.position, this.transform.position) < 3)
+			if(Vector3.Distance(player.transform.position, this.transform.position) < 5)
 			{
-				sacrifice();
+				DoSacrifice();
 			}
 		}
 	}
 
-	void sacrifice()
+	void DoSacrifice()
 	{
-		//player.GetComponent<Player>().add();
-		Debug.Log("SACRIFICE");
+		player.GetComponent<Player>().Sacrifice();
 		Destroy(this.gameObject);
 	}
 }

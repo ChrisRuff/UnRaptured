@@ -55,6 +55,9 @@ ExportedObj/
 sysinfo.txt
 
 Temp/
+*.log
+*.dll
+*.bin
 
 # Builds
 *.apk

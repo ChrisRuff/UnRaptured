@@ -35,7 +35,7 @@ public class CameraController : MonoBehaviour
 
     void RotateCamera()
     {
-        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
+        Quaternion rotation = Quaternion.Euler(-currentY, currentX, 0);
         transform.rotation = rotation;
     }
 

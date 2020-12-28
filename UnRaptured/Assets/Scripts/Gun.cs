@@ -11,7 +11,7 @@ public class Gun : Weapon
     // Start is called before the first frame update
     void Start()
     {
-        GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
         projectileSpeed = 200.0f;
     }
 

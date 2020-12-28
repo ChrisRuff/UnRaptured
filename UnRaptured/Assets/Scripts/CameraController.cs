@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
         offset = transform.position - player.transform.position;
         wantedMode = CursorLockMode.Locked;
         SetCursorState();

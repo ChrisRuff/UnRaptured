@@ -18,14 +18,6 @@ public class Gun : Weapon
         projectileSpeed = 200.0f;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-
-	}
-        
-
 	public override void Attack()
 	{
         //change so projectile spawns at end of gun
@@ -41,4 +33,14 @@ public class Gun : Weapon
 
 		bulletRigidBody.AddForce(fireDir, ForceMode.Impulse);
 	}
+
+    public override void UpdateAccuracy(int change)
+    {
+        accuracy += change;
+    }
+
+    public override void UpdateDamage(int change)
+    {
+        damage += change;
+    }
 }

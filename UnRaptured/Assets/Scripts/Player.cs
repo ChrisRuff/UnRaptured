@@ -326,7 +326,7 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-    #region ISUPGRADINGBLOCK
+    #region UPGRADINGBLOCK
 
     private void HandleUpgrading()
     {
@@ -391,6 +391,11 @@ public class Player : MonoBehaviour
     public void UpgradeAccuracy()
     {
         weapon.UpdateAccuracy(1);
+    }
+
+    public void UpgradeFireSpeed()
+    {
+        weapon.UpdateFireSpeed(0.5f);
     }
 
     #endregion

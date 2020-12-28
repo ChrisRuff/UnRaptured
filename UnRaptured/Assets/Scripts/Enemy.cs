@@ -23,7 +23,6 @@ public abstract class Enemy : MonoBehaviour
 		cooldownRoutine = WaitCooldown();
 	}
 
-	// Update is called once per frame
 	protected IEnumerator WaitCooldown()
 	{
 		yield return new WaitForSeconds(cooldownTime);

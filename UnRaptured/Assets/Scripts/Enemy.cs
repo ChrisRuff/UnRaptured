@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
 	public int health;
 	public float speed;
 
-	public GameObject weapon;
+	protected GameObject player;
+	protected NavMeshAgent agent;
 
-	private GameObject player;
-	private NavMeshAgent agent;
-
-	private bool cooldown = false;
-	private IEnumerator cooldownRoutine;
+	protected bool cooldown = false;
+	protected IEnumerator cooldownRoutine;
+	protected int cooldownTime = 1;
 
 	// Start is called before the first frame update
 	void Start()
@@ -25,20 +24,27 @@ public class Enemy : MonoBehaviour
 	}
 
 	// Update is called once per frame
-	void Update()
+	protected IEnumerator WaitCooldown()
 	{
-		if(!cooldown && Vector3.Distance(player.transform.position, this.transform.position) < 3)
+		yield return new WaitForSeconds(cooldownTime);
+		cooldown = false;
+	}
+
+	void OnCollisionEnter(Collision collision)
+	{
+		if(!cooldown)
 		{
-			player.GetComponent<Player>().TakeDamage(1);
+			player.GetComponent<Player>().TakeDamage(5);
 			cooldown = true;
 			StartCoroutine(cooldownRoutine);
-
 		}
-		agent.destination = player.transform.position;
 	}
-	IEnumerator WaitCooldown()
+	public void Hit(int damage)
 	{
-		yield return new WaitForSeconds(1);
-		cooldown = false;
+		health -= damage;
+		if(health <= 0)
+		{
+			Destroy(gameObject);
+		}
 	}
 }

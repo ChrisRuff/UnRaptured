@@ -48,13 +48,14 @@ public class Spawner : MonoBehaviour
 		if(t * rate >= 1)
 		{
 			SpawnAngel();
+			t = 0;
 		}
-		t += 1 * rateGrowth;
+		t += 1 * startRate;
+		startRate += rateGrowth;
 	}
 
 	void SpawnAngel()
 	{
-		Debug.Log("SPAWNING");
 		Vector3 point = Random.insideUnitCircle.normalized;
 		Vector3 location = (point * spawnInnerRadius) + Random.value * 
 			((point * spawnOuterRadius) - (point * spawnInnerRadius));

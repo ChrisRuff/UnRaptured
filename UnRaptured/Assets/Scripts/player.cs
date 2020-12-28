@@ -37,8 +37,13 @@ public class Player : MonoBehaviour
     private bool isDead;
     private bool damaged;
     #endregion
+
+    private GameObject upgradeStation;
+    private bool isUpgrading;
+    private GameObject upgradeCanvas;
+    private bool isPaused;
+
     public Weapon weapon;
-    //comment later
     Rigidbody rb;
     public CameraController playerCameraController;
 
@@ -66,15 +71,23 @@ public class Player : MonoBehaviour
         #region Health
         currentHealth = startingHealth;
         #endregion
+        upgradeStation = GameObject.FindGameObjectWithTag("UpgradeStation");
+        isUpgrading = false;
+        upgradeCanvas = GameObject.FindGameObjectWithTag("UpgradeCanvas");
+        isPaused = false;
         rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandlePlayerMovement();
-        HandlePlayerHealth();
-        HandleShooting();
+        if (!isPaused)
+        {
+            HandlePlayerMovement();
+            HandlePlayerHealth();
+            HandleShooting();
+        }
+        HandleUpgrading();
     }
 
 
@@ -161,6 +174,7 @@ public class Player : MonoBehaviour
             moveDir = Vector3.zero;
             isMoving = false;
         }
+        Debug.Log(moveDir);
         if (isMoving && !isDead)
         {
             Move();
@@ -189,7 +203,7 @@ public class Player : MonoBehaviour
             movementResult = new Vector3(movementResult.x, rb.velocity.y, movementResult.z);
             rb.velocity = movementResult;
             staminaPoints--;
-
+            
         }
         else
         {
@@ -197,6 +211,7 @@ public class Player : MonoBehaviour
             movementResult = new Vector3(movementResult.x, rb.velocity.y, movementResult.z);
             rb.velocity = movementResult;
         }
+        Debug.Log(Time.deltaTime);
     }
 
     private void CheckIfGrounded()
@@ -292,7 +307,6 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-
     #region SHOOTINGBLOCK
     void HandleShooting()
     {
@@ -301,5 +315,48 @@ public class Player : MonoBehaviour
             weapon.Attack();
         }
     }
+    #endregion
+
+    #region ISUPGRADINGBLOCK
+
+    private void HandleUpgrading()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            CheckUpgrading();
+        }
+        if (isUpgrading)
+        {
+            upgradeCanvas.SetActive(true);
+            playerCameraController.SetCursorState(CursorLockMode.None);
+            playerCameraController.enabled = false;
+        }
+        else
+        {
+            
+        }
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            upgradeCanvas.SetActive(false);
+            playerCameraController.SetCursorState(CursorLockMode.Locked);
+            isUpgrading = false;
+            isPaused = false;
+            playerCameraController.enabled = true;
+        }
+    }
+
+    private void CheckUpgrading()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+        Vector3 rayDirection = ray.direction.normalized;
+
+        if (Physics.Raycast(transform.position, rayDirection * 0.1f, 10f))
+        {
+            isUpgrading = true;
+            isPaused = true;
+        }
+    }
+
+
     #endregion
 }

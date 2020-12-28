@@ -88,4 +88,10 @@ public class CameraController : MonoBehaviour
         Cursor.lockState = wantedMode;
         Cursor.visible = (CursorLockMode.Locked != wantedMode);
     }
+    
+    public void SetCursorState(CursorLockMode cursorMode)
+    {
+        wantedMode = cursorMode;
+        SetCursorState();
+    }
 }

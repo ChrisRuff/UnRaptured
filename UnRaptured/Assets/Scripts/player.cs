@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
     private bool isDead;
     private bool damaged;
     #endregion
+    public Weapon weapon;
     //comment later
     Rigidbody rb;
     public CameraController playerCameraController;
@@ -73,7 +74,7 @@ public class Player : MonoBehaviour
     {
         HandlePlayerMovement();
         HandlePlayerHealth();
-        
+        HandleShooting();
     }
 
 
@@ -228,7 +229,7 @@ public class Player : MonoBehaviour
     }
     #endregion END OF MOVMENT BLCOK
 
-    #region PLAYERHEALTH
+    #region PLAYERHEALTHBLOCK
 
 
 
@@ -284,6 +285,17 @@ public class Player : MonoBehaviour
     public void RestartLevel()
     {
         SceneManager.LoadScene(0);
+    }
+    #endregion
+
+
+    #region SHOOTINGBLOCK
+    void HandleShooting()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            weapon.Attack();
+        }
     }
     #endregion
 }

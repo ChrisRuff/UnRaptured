@@ -66,7 +66,7 @@ public class Player : MonoBehaviour
         #region Health
         currentHealth = startingHealth;
         #endregion
-        rb = GetComponent<Rigidbody>(); 
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -115,7 +115,7 @@ public class Player : MonoBehaviour
 
         if (!isSprinting && isGrounded)
         {
-            timer+= Time.deltaTime;
+            timer += Time.deltaTime;
         }
 
         if (timer > 1)
@@ -131,24 +131,36 @@ public class Player : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
             Vector3 rayDirection = ray.direction.normalized * speed;
+        }
+        if (v != 0 && h == 0)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+            Vector3 rayDirection = ray.direction.normalized * speed;
 
-		float h = Input.GetAxisRaw("Horizontal");
-		float v = Input.GetAxisRaw("Vertical");
+            moveDir = new Vector3(rayDirection.x * v, 0f, rayDirection.z * v); ;
+            isMoving = true;
+        }
+        else if (h != 0 && v == 0)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+            Vector3 rayDirection = ray.direction.normalized * speed;
 
-		
-		if (v != 0 && h == 0)
-		{
-			Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-			Vector3 rayDirection = ray.direction.normalized * speed;
+            moveDir = new Vector3(rayDirection.z * h, 0f, -rayDirection.x * h);
+            isMoving = true;
+        }
+        else if (v != 0 && h != 0)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+            Vector3 rayDirection = ray.direction.normalized * speed;
 
-			moveDir = new Vector3(rayDirection.x * v, 0f, rayDirection.z * v); ;
-			isMoving = true;
-		}
-		else if (h != 0 && v == 0)
-		{
-			Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-			Vector3 rayDirection = ray.direction.normalized * speed;
-
+            moveDir = new Vector3(rayDirection.x * v + rayDirection.z * h, 0f, rayDirection.z * v - rayDirection.x * h);
+            isMoving = true;
+        }
+        else
+        {
+            moveDir = Vector3.zero;
+            isMoving = false;
+        }
         if (isMoving && !isDead)
         {
             Move();
@@ -177,7 +189,7 @@ public class Player : MonoBehaviour
             movementResult = new Vector3(movementResult.x, rb.velocity.y, movementResult.z);
             rb.velocity = movementResult;
             staminaPoints--;
-            
+
         }
         else
         {
@@ -186,29 +198,29 @@ public class Player : MonoBehaviour
             rb.velocity = movementResult;
         }
     }
-    
+
     private void CheckIfGrounded()
     {
         RaycastHit hitInfo;
 #if UNITY_EDITOR
-		// helper to visualise the ground check ray in the scene view
-		//Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * 30));
+        // helper to visualise the ground check ray in the scene view
+        //Debug.DrawLine(transform.position + (Vector3.up * 0.1f), transform.position + (Vector3.up * 0.1f) + (Vector3.down * 30));
 #endif
-		// 0.1f is a small offset to start the ray from inside the character
-		// it is also good to note that the transform position in the sample assets is at the base of the character
-		if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, 1.2f))
-		{
-			isGrounded = true;
-			groundNormal = hitInfo.normal;
-			//m_Animator.applyRootMotion = true;
-		}
-		else
-		{
-			isGrounded = false;
-			groundNormal = Vector3.up;
-			//m_Animator.applyRootMotion = false;
-		}
-	}
+        // 0.1f is a small offset to start the ray from inside the character
+        // it is also good to note that the transform position in the sample assets is at the base of the character
+        if (Physics.Raycast(transform.position + (Vector3.up * 0.1f), Vector3.down, out hitInfo, 1.2f))
+        {
+            isGrounded = true;
+            groundNormal = hitInfo.normal;
+            //m_Animator.applyRootMotion = true;
+        }
+        else
+        {
+            isGrounded = false;
+            groundNormal = Vector3.up;
+            //m_Animator.applyRootMotion = false;
+        }
+    }
 
     public void Jump()
     {

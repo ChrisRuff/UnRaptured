@@ -29,7 +29,7 @@ public class Enemy : MonoBehaviour
 	{
 		if(!cooldown && Vector3.Distance(player.transform.position, this.transform.position) < 3)
 		{
-			player.GetComponent<Player>().Hit(1);
+			player.GetComponent<Player>().TakeDamage(1);
 			cooldown = true;
 			StartCoroutine(cooldownRoutine);
 

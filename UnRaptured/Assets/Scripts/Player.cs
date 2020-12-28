@@ -41,6 +41,8 @@ public class Player : MonoBehaviour
     private GameObject upgradeStation;
     private bool isUpgrading;
     private GameObject upgradeCanvas;
+    private int numShots;
+
     private bool isPaused;
 
     public Weapon weapon;
@@ -75,6 +77,7 @@ public class Player : MonoBehaviour
         #region Health
         currentHealth = startingHealth;
         #endregion
+        numShots = 1;
         upgradeStation = GameObject.FindGameObjectWithTag("UpgradeStation");
         isUpgrading = false;
         upgradeCanvas = GameObject.FindGameObjectWithTag("UpgradeCanvas");
@@ -315,7 +318,10 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            weapon.Attack();
+            for (int i = 0; i < numShots; i++)
+            {
+                weapon.Attack();
+            }
         }
     }
     #endregion
@@ -328,17 +334,8 @@ public class Player : MonoBehaviour
         {
             CheckUpgrading();
         }
-        if (isUpgrading)
-        {
-            upgradeCanvas.SetActive(true);
-            playerCameraController.SetCursorState(CursorLockMode.None);
-            playerCameraController.enabled = false;
-        }
-        else
-        {
 
-        }
-        if (Input.GetKeyDown(KeyCode.U))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             upgradeCanvas.SetActive(false);
             playerCameraController.SetCursorState(CursorLockMode.Locked);
@@ -352,11 +349,18 @@ public class Player : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
         Vector3 rayDirection = ray.direction.normalized;
-
-        if (Physics.Raycast(transform.position, rayDirection * 0.1f, 10f))
+        upgradeCanvas.SetActive(true);
+        playerCameraController.enabled = false;
+        playerCameraController.SetCursorState(CursorLockMode.None);
+        RaycastHit RaycastHit;
+        if (Physics.Raycast(transform.position, rayDirection * 0.1f, out RaycastHit, 10f))
         {
-            isUpgrading = true;
-            isPaused = true;
+            if (RaycastHit.collider.tag == "UpgradeStation")
+            {
+                isUpgrading = true;
+                isPaused = true;
+            }
+            
         }
     }
 
@@ -370,6 +374,10 @@ public class Player : MonoBehaviour
         jumpHeight += 10;
     }
 
+    public void UpgradeNumShots()
+    {
+        numShots++;
+    }
 
     #endregion
 

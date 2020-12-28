@@ -7,8 +7,21 @@ public class Projectiles : MonoBehaviour
 {
 	public int lifetime = 100;
 	public int damage;
+    public Vector3 distance;
+    private bool flag = false;
+    private Collider coll;
+    private Vector3 origin;
+    
 
-	private void OnCollisionEnter(Collision other)
+    private void Start()
+    {
+        coll = GetComponent<Collider>();
+        origin = this.transform.position;
+
+        coll.enabled = false;
+    }
+
+    private void OnCollisionEnter(Collision other)
     {
         Debug.Log(other.gameObject.tag);
         if (other.gameObject.tag == "Enemy")
@@ -18,7 +31,8 @@ public class Projectiles : MonoBehaviour
 		}
 	}
 
-	private void DeleteProjectile()
+
+    private void DeleteProjectile()
 	{
 		Destroy(gameObject);
 	}
@@ -30,5 +44,9 @@ public class Projectiles : MonoBehaviour
 		{
 			DeleteProjectile();
 		}
+        if (Vector3.Distance(origin, this.transform.position) > distance.magnitude)
+        {
+            coll.enabled = true;
+        }
 	}
 }

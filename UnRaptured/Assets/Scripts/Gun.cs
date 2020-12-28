@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Gun : Weapon
 {
-    public GameObject player;
+    private GameObject player;
     private float projectileSpeed;
     public GameObject bullet;
     
     // Start is called before the first frame update
     void Start()
     {
+        GameObject.FindGameObjectWithTag("Player");
         projectileSpeed = 200.0f;
     }
 

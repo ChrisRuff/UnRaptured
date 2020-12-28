@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour
 {
     CursorLockMode wantedMode;
 
-    public GameObject player;
+    private GameObject player;
 
     private Vector3 offset;
 
@@ -15,6 +15,7 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
+        GameObject.FindGameObjectWithTag("Player");
         offset = transform.position - player.transform.position;
         wantedMode = CursorLockMode.Locked;
         SetCursorState();

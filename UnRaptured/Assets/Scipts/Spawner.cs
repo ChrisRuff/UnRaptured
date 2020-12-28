@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-	public GameObject player;
 	public GameObject enemies;
 	public float startRate = 0.001f;
 	public float rateGrowth = 0.01f;
 	public float spawnInnerRadius = 10f;
 	public float spawnOuterRadius = 15f;
 
+	private GameObject player;
 	public int spawnLimit = 100;
 	private int spawned = 0;
 
@@ -25,6 +25,7 @@ public class Spawner : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
+		player = GameObject.FindWithTag("Player");
 		if(player == null)
 		{
 			Debug.Log("SPAWNER REQUIRES PLAYER");
@@ -49,6 +50,7 @@ public class Spawner : MonoBehaviour
 
 	void SpawnAngel()
 	{
+		Debug.Log("SPAWNING");
 		if(spawned >= spawnLimit)
 			return;
 		Vector3 point = Random.insideUnitCircle.normalized;

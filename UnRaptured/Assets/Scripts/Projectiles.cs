@@ -9,8 +9,9 @@ public class Projectiles : MonoBehaviour
 	public int damage;
 
 	private void OnCollisionEnter(Collision other)
-	{
-		if(other.gameObject.tag == "Enemy")
+    {
+        Debug.Log(other.gameObject.tag);
+        if (other.gameObject.tag == "Enemy")
 		{
 			other.gameObject.GetComponent<Enemy>().Hit(damage);
 			DeleteProjectile();

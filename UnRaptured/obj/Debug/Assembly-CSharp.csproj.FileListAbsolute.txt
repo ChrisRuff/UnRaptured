@@ -1,0 +1,2 @@
+D:\UnRaptured\UnRaptured\UnRaptured\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+D:\UnRaptured\UnRaptured\UnRaptured\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache

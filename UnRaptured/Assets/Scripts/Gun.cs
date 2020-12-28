@@ -23,7 +23,7 @@ public class Gun : Weapon
     public override void Attack()
     {
         //change so projectile spawns at end of gun
-        GameObject firedBullet = Instantiate(bullet, transform.position, player.transform.rotation);
+        GameObject firedBullet = Instantiate(bullet, Camera.main.transform.position, player.transform.rotation);
 
         Rigidbody bulletRigidBody = firedBullet.GetComponent<Rigidbody>();
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));

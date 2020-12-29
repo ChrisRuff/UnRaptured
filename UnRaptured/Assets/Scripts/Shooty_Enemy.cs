@@ -5,23 +5,28 @@ using UnityEngine;
 public class Shooty_Enemy : Enemy
 {
 
-	public int DesiredDistance = 15;
+	public int desiredDistance = 15;
 	public Weapon weapon;
 
-	// Update is called once per frame
-	void Update()
+	protected override void Start()
 	{
+		base.Start();
+	}
+
+	// Update is called once per frame
+	protected override void Update()
+	{
+		base.Update();
 		if(Vector3.Distance(player.transform.position, this.transform.position) > 
-				DesiredDistance)
+				desiredDistance)
 		{
 			agent.destination = player.transform.position;
 		}
-
-		if(!cooldown)
+		else
 		{
-			weapon.Attack();
-			cooldown = true;
-			StartCoroutine(cooldownRoutine);
+			agent.destination = this.transform.position + (this.transform.position - player.transform.position).normalized;
 		}
+
+		weapon.Attack();
 	}
 }

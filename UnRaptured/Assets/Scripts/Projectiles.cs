@@ -7,32 +7,36 @@ public class Projectiles : MonoBehaviour
 {
 	public int lifetime = 100;
 	public int damage;
-    public Vector3 distance;
-    private bool flag = false;
-    private Collider coll;
-    private Vector3 origin;
-    
+	public Vector3 distance;
+	private bool flag = false;
+	private Collider coll;
+	private Vector3 origin;
+	
 
-    private void Start()
-    {
-        coll = GetComponent<Collider>();
-        origin = this.transform.position;
+	private void Start()
+	{
+		coll = GetComponent<Collider>();
+		origin = this.transform.position;
 
-        coll.enabled = false;
-    }
+		coll.enabled = false;
+	}
 
-    private void OnCollisionEnter(Collision other)
-    {
-        Debug.Log(other.gameObject.tag);
-        if (other.gameObject.tag == "Enemy")
+	private void OnCollisionEnter(Collision other)
+	{
+		Debug.Log(other.gameObject.tag);
+		if (other.gameObject.tag == "Enemy")
 		{
 			other.gameObject.GetComponent<Enemy>().Hit(damage);
 			DeleteProjectile();
 		}
+		else if(other.gameObject.tag == "Player")
+		{
+			other.gameObject.GetComponent<Player>().TakeDamage(damage);
+		}
 	}
 
 
-    private void DeleteProjectile()
+	private void DeleteProjectile()
 	{
 		Destroy(gameObject);
 	}
@@ -44,9 +48,9 @@ public class Projectiles : MonoBehaviour
 		{
 			DeleteProjectile();
 		}
-        if (Vector3.Distance(origin, this.transform.position) > distance.magnitude)
-        {
-            coll.enabled = true;
-        }
+		if (Vector3.Distance(origin, this.transform.position) > distance.magnitude)
+		{
+			coll.enabled = true;
+		}
 	}
 }

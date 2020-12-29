@@ -13,14 +13,19 @@ public abstract class Enemy : MonoBehaviour
 
 	protected bool cooldown = false;
 	protected IEnumerator cooldownRoutine;
-	protected int cooldownTime = 1;
+	protected float cooldownTime = 1f;
 
 	// Start is called before the first frame update
-	void Start()
+	protected virtual void Start()
 	{
 		agent = GetComponent<NavMeshAgent>();
 		player = GameObject.FindWithTag("Player");
 		cooldownRoutine = WaitCooldown();
+	}
+
+	protected virtual void Update()
+	{
+		this.transform.LookAt(player.transform);
 	}
 
 	// Update is called once per frame
@@ -32,9 +37,9 @@ public abstract class Enemy : MonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
-		if(!cooldown)
+		if(!cooldown && collision.gameObject.tag == "Player")
 		{
-			player.GetComponent<Player>().TakeDamage(5);
+			player.GetComponent<Player>().TakeDamage(10);
 			cooldown = true;
 			StartCoroutine(cooldownRoutine);
 		}

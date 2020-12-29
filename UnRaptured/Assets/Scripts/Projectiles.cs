@@ -7,11 +7,10 @@ public class Projectiles : MonoBehaviour
 {
 	public int lifetime = 100;
 	public int damage;
-	public Vector3 distance;
-	private bool flag = false;
-	private Collider coll;
-	private Vector3 origin;
-	
+    public Vector3 distance;
+    private Collider coll;
+    private Vector3 origin;
+    
 
 	private void Start()
 	{

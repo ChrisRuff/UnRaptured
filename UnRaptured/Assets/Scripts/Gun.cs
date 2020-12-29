@@ -5,15 +5,17 @@ using UnityEngine;
 public class Gun : Weapon
 {
 	public int damage;
-	private GameObject gunHolder;
-	private float projectileSpeed;
-	public GameObject bullet;
-	private int accuracy;
+    private GameObject gunHolder;
+    private float projectileSpeed;
+    public GameObject bullet;
+    private int accuracy;
+    private float cooldown;
+    private float timer;
+        cooldown = 0.5f;
+        timer = 0;
 
 	public bool AllyHeld = true;
 	private GameObject player;
-	
-	// Start is called before the first frame update
 	void Start()
 	{
 		accuracy = 10;
@@ -23,21 +25,23 @@ public class Gun : Weapon
 		{
 			player = GameObject.FindWithTag("Player");
 		}
-	}
+    public override void UpdateTimer()
+    {
+        timer += Time.deltaTime;
+    }
 
-	// Update is called once per frame
-	void Update()
-	{
-		
+    public void Update()
+    {
+        UpdateTimer();
+        Debug.Log(timer);
+    }
 
-	}
-
-	public override void Attack()
-	{
-		//change so projectile spawns at end of gun
-		GameObject firedBullet = Instantiate(bullet, gunHolder.transform.position, gunHolder.transform.rotation); 
-		firedBullet.GetComponent<Projectiles>().damage = damage;
-		firedBullet.GetComponent<Projectiles>().distance = gunHolder.GetComponent<Collider>().bounds.size/2;
+    public override void Attack()
+        if (cooldown < timer || timer == 0)
+        {
+            GameObject firedBullet = Instantiate(bullet, gunHolder.transform.position, gunHolder.transform.rotation);
+            firedBullet.GetComponent<Projectiles>().damage = damage;
+            firedBullet.GetComponent<Projectiles>().distance = gunHolder.GetComponent<Collider>().bounds.size / 2;
 
 		Rigidbody bulletRigidBody = firedBullet.GetComponent<Rigidbody>();
 		Vector3 fireDir;
@@ -53,7 +57,26 @@ public class Gun : Weapon
 		}
 
 		fireDir = fireDir + accuracy * (Vector3.up * Random.value + Vector3.right * Random.value + Vector3.forward * Random.value) - gunHolder.transform.position;
-
 		bulletRigidBody.AddForce(fireDir, ForceMode.Impulse);
+        timer = 0;
 	}
+
+    public override void UpdateAccuracy(int change)
+    {
+        accuracy += change;
+    }
+
+    private Vector3 GetSpread()
+    {
+        return accuracy * (Vector3.up * Random.value * (Random.value > 0.5 ? 1 : -1) + Vector3.right * Random.value * (Random.value > 0.5 ? 1 : -1) + Vector3.forward * Random.value * (Random.value > 0.5 ? 1 : -1));
+    }
+
+    public override void UpdateDamage(int change)
+    {
+        damage += change;
+    }
+    public override void UpdateFireSpeed(float change)
+    {
+        cooldown *= change;
+    }
 }

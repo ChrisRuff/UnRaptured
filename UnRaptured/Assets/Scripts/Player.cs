@@ -127,7 +127,7 @@ public class Player : MonoBehaviour
 				}
 
         //sprinting
-        if (Input.GetKey(KeyCode.LeftShift) && isGrounded)
+        if (Input.GetKey(KeyCode.LeftShift) && isGrounded && staminaPoints > 20)
         {
             isSprinting = true;
             recoverStamina = false;
@@ -138,7 +138,7 @@ public class Player : MonoBehaviour
             isSprinting = false;
         }
 
-        if (!isSprinting && isGrounded)
+        if (!isSprinting)
         {
             timer += Time.deltaTime;
         }
@@ -330,13 +330,19 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-    #region ISUPGRADINGBLOCK
+    #region UPGRADINGBLOCK
 
     private void HandleUpgrading()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
             CheckUpgrading();
+        }
+        if (isUpgrading)
+        {
+            upgradeCanvas.SetActive(true);
+            playerCameraController.enabled = false;
+            playerCameraController.SetCursorState(CursorLockMode.None);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -353,18 +359,15 @@ public class Player : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
         Vector3 rayDirection = ray.direction.normalized;
-        upgradeCanvas.SetActive(true);
-        playerCameraController.enabled = false;
-        playerCameraController.SetCursorState(CursorLockMode.None);
         RaycastHit RaycastHit;
-        if (Physics.Raycast(transform.position, rayDirection * 0.1f, out RaycastHit, 10f))
+        if (Physics.Raycast(transform.position, rayDirection, out RaycastHit, 2f))
         {
             if (RaycastHit.collider.tag == "UpgradeStation")
             {
+                Debug.DrawLine(transform.position, rayDirection);
                 isUpgrading = true;
                 isPaused = true;
             }
-            
         }
     }
 
@@ -378,9 +381,25 @@ public class Player : MonoBehaviour
         jumpHeight += 10;
     }
 
+    public void UpgradeDamage()
+    {
+        weapon.UpdateDamage(10);
+    }
+
     public void UpgradeNumShots()
     {
         numShots++;
+        weapon.UpdateAccuracy(-5);
+    }
+
+    public void UpgradeAccuracy()
+    {
+        weapon.UpdateAccuracy(1);
+    }
+
+    public void UpgradeFireSpeed()
+    {
+        weapon.UpdateFireSpeed(0.5f);
     }
 
     #endregion

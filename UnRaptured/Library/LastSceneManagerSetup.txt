@@ -1,6 +1,6 @@
 sceneSetups:
 <<<<<<< HEAD
-- path: Assets/Test.unity
+- path: Assets/Scenes/Test Scene.unity
 =======
 - path: Assets/Scenes/World_Map.unity
 >>>>>>> feat-map

@@ -1,12 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-	// Health
-	public int health;
-
+	#region Movement Instance Variables
 	//normal movement
 	private float speed;
 	private Vector3 moveDir;
@@ -16,6 +17,8 @@ public class Player : MonoBehaviour
 	private bool isSprinting;
 	private bool recoverStamina;
 	private float staminaPoints;
+	public Slider staminaSlider;
+	private float timer;
 
 	//jumping
 	private Vector3 groundNormal;
@@ -23,15 +26,38 @@ public class Player : MonoBehaviour
 	private float origGroundCheckDistance;
 	private bool isGrounded;
 	private float jumpHeight;
+	#endregion
 
-	//comment later
+	#region Health Instance Variables
+	public Image damageImage;
+	public Slider healthSlider;
+	public int startingHealth = 100;
+	private int currentHealth;
+	private float flashSpeed = 5f;
+	private Color flashColour = new Color(1f, 0f, 0f, 0.1f);
+	private bool isDead;
+	private bool damaged;
+	#endregion
+
+	private GameObject upgradeStation;
+	private bool isUpgrading;
+	private GameObject upgradeCanvas;
+	private int numShots;
+
+	private bool isPaused;
+
+	public Weapon weapon;
 	Rigidbody rb;
 	public CameraController playerCameraController;
+
+	// points
+	private int points = 10;
+	public Text pointsUI;
 
 	// Start is called before the first frame update
 	void Start()
 	{
-		
+		#region Movement
 		//normal movement
 		speed = 500.0f;
 		moveDir = Vector3.zero;
@@ -39,53 +65,93 @@ public class Player : MonoBehaviour
 
 		//sprinting
 		isSprinting = false;
-		staminaPoints = 100000f;
+		staminaPoints = 100f;
 		recoverStamina = false;
+		timer = 0.0f;
 
 		//jumping
 		isGrounded = false;
 		groundCheckDistance = 0.1f;
 		origGroundCheckDistance = groundCheckDistance;
 		jumpHeight = 50f;
+		#endregion
 
-		rb = GetComponent<Rigidbody>(); 
+		#region Health
+		currentHealth = startingHealth;
+		#endregion
+
+		numShots = 1;
+		upgradeStation = GameObject.FindGameObjectWithTag("UpgradeStation");
+		isUpgrading = false;
+		upgradeCanvas = GameObject.FindGameObjectWithTag("UpgradeCanvas");
+		upgradeCanvas.SetActive(false);
+		isPaused = false;
+		rb = GetComponent<Rigidbody>();
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
-		if(health <= 0)
+		if (!isPaused)
 		{
-			// Dead
-			Debug.Log("Dead");
+			HandlePlayerMovement();
+			HandlePlayerHealth();
+			HandleShooting();
 		}
+		HandleUpgrading();
+	}
+	#region MOVEMENTBLOCK
 
+	private void HandlePlayerMovement()
+	{
 		//Check if can jump and jump if able
 		CheckIfGrounded();
-		if (Input.GetButtonDown("Jump") && isGrounded)
+		if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
 		{
 			if (staminaPoints >= 10)
 			{
 				Jump();
 				staminaPoints -= 10;
 				recoverStamina = false;
+				timer = 0;
 			}
 		}
+				if(Input.GetKeyDown(KeyCode.B))
+				{
+					UnityEditor.EditorApplication.isPlaying = false;
+				}
 
 		//sprinting
-		if (Input.GetKey(KeyCode.LeftShift))
+		if (Input.GetKey(KeyCode.LeftShift) && isGrounded && staminaPoints > 20)
 		{
 			isSprinting = true;
+			recoverStamina = false;
+			timer = 0;
 		}
-		else
+		else if (!Input.GetKey(KeyCode.LeftShift) && isGrounded)
 		{
 			isSprinting = false;
+		}
+
+		if (!isSprinting)
+		{
+			timer += Time.deltaTime;
+		}
+
+		if (timer > 1)
+		{
+			recoverStamina = true;
 		}
 
 		float h = Input.GetAxisRaw("Horizontal");
 		float v = Input.GetAxisRaw("Vertical");
 
-		
+
+		if (v != 0 && h == 0)
+		{
+			Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+			Vector3 rayDirection = ray.direction.normalized * speed;
+		}
 		if (v != 0 && h == 0)
 		{
 			Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
@@ -115,34 +181,44 @@ public class Player : MonoBehaviour
 			moveDir = Vector3.zero;
 			isMoving = false;
 		}
-
-		if (isMoving)
+		if (isMoving && !isDead)
 		{
 			Move();
 		}
 		else
 		{
-			rb.velocity = Vector3.zero;
+			rb.velocity = new Vector3(0, rb.velocity.y, 0);
 		}
 
 		Rotate();
+
+		if (recoverStamina && staminaPoints < 100)
+		{
+			staminaPoints++;
+		}
+		staminaSlider.value = staminaPoints;
 	}
 
 	public void Move()
 	{
 		moveDir = moveDir.normalized;
+		Vector3 movementResult = new Vector3();
 		if (isSprinting && staminaPoints > 0)
 		{
-			rb.velocity = moveDir * speed * 2 * Time.deltaTime;
+			movementResult = moveDir * speed * 2 * Time.deltaTime;
+			movementResult = new Vector3(movementResult.x, rb.velocity.y, movementResult.z);
+			rb.velocity = movementResult;
 			staminaPoints--;
-			
+
 		}
 		else
 		{
-			rb.velocity = moveDir * speed * Time.deltaTime;
+			movementResult = moveDir * speed * Time.deltaTime;
+			movementResult = new Vector3(movementResult.x, rb.velocity.y, movementResult.z);
+			rb.velocity = movementResult;
 		}
 	}
-	
+
 	private void CheckIfGrounded()
 	{
 		RaycastHit hitInfo;
@@ -168,18 +244,184 @@ public class Player : MonoBehaviour
 
 	public void Jump()
 	{
-		rb.velocity = new Vector3(0, 10 * jumpHeight * Time.deltaTime, 0);
+		rb.velocity = new Vector3(rb.velocity.x, 10 * jumpHeight * Time.deltaTime, rb.velocity.z);
 	}
 
 	public void Rotate()
 	{
 		rb.transform.rotation = playerCameraController.transform.rotation;
 	}
+	#endregion END OF MOVMENT BLCOK
 
-	public void Hit(int damage)
+	#region PLAYERHEALTHBLOCK
+
+
+	private void HandlePlayerHealth()
 	{
-		health -= damage;
-		Debug.Log("Took " + damage + " damage!");
+		if (damaged)
+		{
+			damageImage.color = flashColour;
+		}
+		else
+		{
+			damageImage.color = Color.Lerp(damageImage.color, Color.clear, flashSpeed * Time.deltaTime);
+		}
+
+		damaged = false;
+		if (isDead)
+		{
+			RestartLevel();
+		}
 	}
 
+	public void TakeDamage(int amount)
+	{
+		damaged = true;
+
+		currentHealth -= amount;
+
+		healthSlider.value = currentHealth;
+
+		if (currentHealth <= 0)
+		{
+			Death();
+		}
+	}
+
+	private void Death()
+	{
+		isDead = true;
+
+		playerCameraController.enabled = false;
+	}
+
+	public void RestartLevel()
+	{
+		SceneManager.LoadScene(0);
+	}
+	#endregion
+
+	#region SHOOTINGBLOCK
+	void HandleShooting()
+	{
+		if (Input.GetKeyDown(KeyCode.Mouse0))
+		{
+			for (int i = 0; i < numShots; i++)
+			{
+				weapon.Attack();
+			}
+		}
+	}
+	#endregion
+
+	#region UPGRADINGBLOCK
+
+	private void HandleUpgrading()
+	{
+		if (Input.GetKeyDown(KeyCode.E))
+		{
+			CheckUpgrading();
+		}
+		if (isUpgrading)
+		{
+			upgradeCanvas.SetActive(true);
+			playerCameraController.enabled = false;
+			playerCameraController.SetCursorState(CursorLockMode.None);
+		}
+
+		if(isUpgrading && Input.GetKeyDown(KeyCode.Escape))
+		{
+			upgradeCanvas.SetActive(false);
+			playerCameraController.SetCursorState(CursorLockMode.Locked);
+			isUpgrading = false;
+			isPaused = false;
+			playerCameraController.enabled = true;
+		}
+	}
+
+	private void CheckUpgrading()
+	{
+		Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
+		Vector3 rayDirection = ray.direction.normalized;
+		RaycastHit RaycastHit;
+		if (Physics.Raycast(transform.position, rayDirection, out RaycastHit, 2f))
+		{
+			if (RaycastHit.collider.tag == "UpgradeStation")
+			{
+				isUpgrading = true;
+				isPaused = true;
+			}
+		}
+	}
+
+	public void UpgradeSpeed()
+	{
+		if(usePoint())
+		{
+			speed += 100;
+		}
+	}
+
+	public void UpgradeJump()
+	{
+		if(usePoint())
+		{
+			jumpHeight += 10;
+		}
+	}
+
+	public void UpgradeDamage()
+	{
+		if(usePoint())
+		{
+			weapon.UpdateDamage(10);
+		}
+	}
+
+	public void UpgradeNumShots()
+	{
+		if(usePoint())
+		{
+			numShots++;
+			weapon.UpdateAccuracy(-5);
+		}
+	}
+
+	public void UpgradeAccuracy()
+	{
+		if(usePoint())
+		{
+			weapon.UpdateAccuracy(1);
+		}
+	}
+
+	public void UpgradeFireSpeed()
+	{
+		if(usePoint())
+		{
+			weapon.UpdateFireSpeed(0.5f);
+		}
+	}
+
+	#endregion
+
+	public void Sacrifice()
+	{
+		points++;
+		pointsUI.text = points.ToString();
+	}
+	private bool usePoint()
+	{
+		if(points == 0)
+		{
+			Debug.Log("NO POINTS");
+			return false;
+		}
+		points--;
+		pointsUI.text = points.ToString();
+		Debug.Log("Spending points");
+
+		return true;
+	}
+	
 }

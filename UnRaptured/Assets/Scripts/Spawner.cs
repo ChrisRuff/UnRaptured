@@ -9,6 +9,8 @@ public class Spawner : MonoBehaviour
 	public float rateGrowth = 0.01f;
 	public float spawnInnerRadius = 10f;
 	public float spawnOuterRadius = 15f;
+	public float spawnHeightMin = 0.0f;
+	public float spawnHeightMax = 0.0f;
 
 	private GameObject player;
 	private Player p;
@@ -47,20 +49,28 @@ public class Spawner : MonoBehaviour
 			return;
 		if(t * rate >= 1)
 		{
-			SpawnAngel();
+			Spawn();
+			t = 0;
 		}
-		t += 1 * rateGrowth;
+		t += 1 * startRate;
+		startRate += rateGrowth;
 	}
 
-	void SpawnAngel()
+	void Spawn()
 	{
-		Debug.Log("SPAWNING");
 		Vector3 point = Random.insideUnitCircle.normalized;
 		Vector3 location = (point * spawnInnerRadius) + Random.value * 
 			((point * spawnOuterRadius) - (point * spawnInnerRadius));
 		var temp = location.y;
-		location.y = location.z;
+		location.y = location.z + Random.Range(spawnHeightMin, spawnHeightMax);
 		location.z = temp;
+
+		// Don't spawn in other geometry
+		if(Physics.OverlapSphere(location, 1).Length > 0)
+		{
+			Debug.Log("CAN'T SPAWN: " + enemies.ToString() + " HERE");
+			return;
+		}
 
 		Instantiate(enemies, location, Quaternion.identity);
 		spawned++;

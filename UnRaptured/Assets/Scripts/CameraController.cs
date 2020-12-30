@@ -6,7 +6,7 @@ public class CameraController : MonoBehaviour
 {
     CursorLockMode wantedMode;
 
-    public GameObject player;
+    private GameObject player;
 
     private Vector3 offset;
 
@@ -15,6 +15,7 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         offset = transform.position - player.transform.position;
         wantedMode = CursorLockMode.Locked;
         SetCursorState();
@@ -35,7 +36,7 @@ public class CameraController : MonoBehaviour
 
     void RotateCamera()
     {
-        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
+        Quaternion rotation = Quaternion.Euler(-currentY, currentX, 0);
         transform.rotation = rotation;
     }
 
@@ -86,5 +87,11 @@ public class CameraController : MonoBehaviour
     {
         Cursor.lockState = wantedMode;
         Cursor.visible = (CursorLockMode.Locked != wantedMode);
+    }
+    
+    public void SetCursorState(CursorLockMode cursorMode)
+    {
+        wantedMode = cursorMode;
+        SetCursorState();
     }
 }

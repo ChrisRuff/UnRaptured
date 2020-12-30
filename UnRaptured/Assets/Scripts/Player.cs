@@ -116,10 +116,6 @@ public class Player : MonoBehaviour
 				timer = 0;
 			}
 		}
-				if(Input.GetKeyDown(KeyCode.B))
-				{
-					UnityEditor.EditorApplication.isPlaying = false;
-				}
 
 		//sprinting
 		if (Input.GetKey(KeyCode.LeftShift) && isGrounded && staminaPoints > 20)

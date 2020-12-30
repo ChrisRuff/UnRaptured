@@ -19,6 +19,10 @@ public class Gun : Weapon
 		{
 			player = GameObject.FindWithTag("Player");
 		}
+		else
+		{
+			gunHolder = transform.parent.parent.gameObject;
+		}
 	}
 
 	public override void UpdateTimer()

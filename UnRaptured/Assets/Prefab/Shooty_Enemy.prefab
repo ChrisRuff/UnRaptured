@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &5885384549046584629
+--- !u!114 &-2469432841520240462
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87dc48d54851e6569b67429144185004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 20
-  speed: 5
-  damage: 5
-  desiredDistance: 15
+  health: 5
+  speed: 1
+  damage: 1
+  desiredDistance: 20
   weapon: {fileID: 1586901455822509379}
 --- !u!1 &7632235905543243563
 GameObject:
@@ -148,6 +148,8 @@ PrefabInstance:
         type: 3}
     m_RemovedComponents:
     - {fileID: 8479666241810652511, guid: c1dc5154b00dd2aa58ec31c4b899763a, type: 3}
+    - {fileID: 3978698206004089857, guid: c1dc5154b00dd2aa58ec31c4b899763a, type: 3}
+    - {fileID: 2594171084952676996, guid: c1dc5154b00dd2aa58ec31c4b899763a, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c1dc5154b00dd2aa58ec31c4b899763a, type: 3}
 --- !u!1 &7019459603594563144 stripped
 GameObject:

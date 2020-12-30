@@ -13,7 +13,9 @@ public abstract class Enemy : MonoBehaviour
 
 	protected bool cooldown = false;
 	protected IEnumerator cooldownRoutine;
-	protected float cooldownTime = 1f;
+	protected float cooldownTime = .5f;
+	
+	protected bool STOP = false;
 
 	// Start is called before the first frame update
 	protected virtual void Start()
@@ -34,13 +36,28 @@ public abstract class Enemy : MonoBehaviour
 		cooldown = false;
 	}
 
-	void OnCollisionEnter(Collision collision)
+	void OnTriggerEnter(Collider col)
 	{
-		if(!cooldown && collision.gameObject.tag == "Player")
+		if(col.gameObject.tag == "Player")
 		{
-			player.GetComponent<Player>().TakeDamage(damage);
-			cooldown = true;
-			StartCoroutine(cooldownRoutine);
+			STOP = true;
+			if(!cooldown)
+			{
+				player.GetComponent<Player>().TakeDamage(damage);
+				cooldown = true;
+				StartCoroutine(cooldownRoutine);
+			}
+		}
+	}
+	void OnTriggerStay(Collider col)
+	{
+		OnTriggerEnter(col);
+	}
+	void OnTriggerExit(Collider col)
+	{
+		if(col.gameObject.tag == "Player")
+		{
+			STOP = false;
 		}
 	}
 	public void Hit(int damage)

@@ -19,9 +19,8 @@ public class Projectiles : MonoBehaviour
 		coll.enabled = false;
 	}
 
-	private void OnCollisionEnter(Collision other)
+	private void OnTriggerEnter(Collider other)
 	{
-		Debug.Log(other.gameObject.tag);
 		if (other.gameObject.tag == "Enemy")
 		{
 			other.gameObject.GetComponent<Enemy>().Hit(damage);

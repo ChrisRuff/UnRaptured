@@ -20,7 +20,7 @@ public class Shooty_Enemy : Enemy
 	// Update is called once per frame
 	protected override void Update()
 	{
-
+		
 		Vector3 target = player.transform.position;
 		target.y = player.transform.position.y + 20;
 		if(Vector3.Distance(target, this.transform.position) > desiredDistance)

@@ -9,6 +9,8 @@ public class Spawner : MonoBehaviour
 	public float rateGrowth = 0.01f;
 	public float spawnInnerRadius = 10f;
 	public float spawnOuterRadius = 15f;
+	public float spawnHeightMin = 0.0f;
+	public float spawnHeightMax = 0.0f;
 
 	private GameObject player;
 	private Player p;
@@ -47,22 +49,30 @@ public class Spawner : MonoBehaviour
 			return;
 		if(t * rate >= 1)
 		{
-			SpawnAngel();
+			Spawn();
 			t = 0;
 		}
 		t += 1 * startRate;
 		startRate += rateGrowth;
 	}
 
-	void SpawnAngel()
+	void Spawn()
 	{
 		Vector3 point = Random.insideUnitCircle.normalized;
 		Vector3 location = (point * spawnInnerRadius) + Random.value * 
 			((point * spawnOuterRadius) - (point * spawnInnerRadius));
 		var temp = location.y;
-		location.y = location.z;
+		location.y = location.z + Random.Range(spawnHeightMin, spawnHeightMax);
 		location.z = temp;
 
+		// Test if point is in camera
+		Vector3 testPoint = GameObject.FindWithTag("MainCamera").GetComponent<Camera>().WorldToViewportPoint(location);
+		if(testPoint.x > 0 && testPoint.x < 1 &&
+				testPoint.y > 0 && testPoint.y < 1 &&
+				testPoint.z > 0)
+		{
+			return;
+		}
 		Instantiate(enemies, location, Quaternion.identity);
 		spawned++;
 	}

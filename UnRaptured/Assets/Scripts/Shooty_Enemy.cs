@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Shooty_Enemy : Enemy
 {
@@ -11,20 +12,27 @@ public class Shooty_Enemy : Enemy
 	protected override void Start()
 	{
 		base.Start();
+		weapon.SetCooldown(20f);
 	}
 
 	// Update is called once per frame
 	protected override void Update()
 	{
 		base.Update();
-		if(Vector3.Distance(player.transform.position, this.transform.position) > 
-				desiredDistance)
+
+		Vector3 target = player.transform.position;
+		target.y = player.transform.position.y + 20;
+		if(Vector3.Distance(target, this.transform.position) > desiredDistance)
 		{
-			agent.destination = player.transform.position;
+			this.transform.position = 
+				Vector3.MoveTowards(this.transform.position, target, 
+						GetComponent<NavMeshAgent>().speed * Time.deltaTime);
 		}
 		else
 		{
-			agent.destination = this.transform.position + (this.transform.position - player.transform.position).normalized;
+			this.transform.position = Vector3.MoveTowards(this.transform.position,
+					this.transform.position + (this.transform.position - player.transform.position).normalized,
+					GetComponent<NavMeshAgent>().speed * Time.deltaTime);
 		}
 
 		weapon.Attack();

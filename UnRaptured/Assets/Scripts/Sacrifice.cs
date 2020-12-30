@@ -10,6 +10,12 @@ public class Sacrifice : MonoBehaviour
 	void Start()
 	{
 		player = GameObject.FindWithTag("Player");
+
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position, -Vector3.up, out hit)) 
+		{
+			transform.position = hit.transform.position;
+		}
 	}
 
 	// Update is called once per frame

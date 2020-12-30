@@ -25,12 +25,12 @@ public class Projectiles : MonoBehaviour
 		if (other.gameObject.tag == "Enemy")
 		{
 			other.gameObject.GetComponent<Enemy>().Hit(damage);
-			DeleteProjectile();
 		}
 		else if(other.gameObject.tag == "Player")
 		{
 			other.gameObject.GetComponent<Player>().TakeDamage(damage);
 		}
+		DeleteProjectile();
 	}
 
 

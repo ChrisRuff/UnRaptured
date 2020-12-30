@@ -37,7 +37,7 @@ public class Gun : Weapon
 		{
 			GameObject firedBullet = Instantiate(bullet, gunHolder.transform.position, gunHolder.transform.rotation);
 			firedBullet.GetComponent<Projectiles>().damage = damage;
-			firedBullet.GetComponent<Projectiles>().distance = gunHolder.GetComponent<Collider>().bounds.size / 2;
+			firedBullet.GetComponent<Projectiles>().distance = gunHolder.GetComponent<Collider>().bounds.size;
 
 			Rigidbody bulletRigidBody = firedBullet.GetComponent<Rigidbody>();
 			Vector3 fireDir;
@@ -45,18 +45,14 @@ public class Gun : Weapon
 			{
 				
 				Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
-				fireDir = ray.origin + ray.direction.normalized * projectileSpeed;
+				fireDir = ray.origin + ray.direction.normalized * projectileSpeed - gunHolder.transform.position;
 			}
 			else
 			{
 				fireDir = (player.transform.position - gunHolder.transform.position).normalized * projectileSpeed;
 			}
 
-			fireDir = fireDir + accuracy * 
-				(Vector3.up * Random.value + 
-				 Vector3.right * Random.value + 
-				 Vector3.forward * Random.value) 
-				- gunHolder.transform.position;
+			fireDir = fireDir + GetSpread();
 
 			bulletRigidBody.AddForce(fireDir, ForceMode.Impulse);
 			timer = 0;
@@ -66,13 +62,6 @@ public class Gun : Weapon
 	public override void UpdateAccuracy(int change)
 	{
 		accuracy += change;
-	}
-
-	private Vector3 GetSpread()
-	{
-		return accuracy * (Vector3.up * Random.value * (Random.value > 0.5 ? 1 : -1) + 
-				Vector3.right * Random.value * (Random.value > 0.5 ? 1 : -1) + 
-				Vector3.forward * Random.value * (Random.value > 0.5 ? 1 : -1));
 	}
 
 	public override void UpdateDamage(int change)

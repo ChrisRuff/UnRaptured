@@ -27,4 +27,19 @@ public abstract class Weapon : MonoBehaviour
 	{
 		this.cooldown = duration;
 	}
+	public void SetAccuracy(int accuracy)
+	{
+		this.accuracy = accuracy;
+	}
+	public void SetDamage(int damage)
+	{
+		this.damage = damage;
+	}
+
+	protected Vector3 GetSpread()
+	{
+		return accuracy * (Vector3.up * Random.value * (Random.value > 0.5 ? 1 : -1) + 
+				Vector3.right * Random.value * (Random.value > 0.5 ? 1 : -1) + 
+				Vector3.forward * Random.value * (Random.value > 0.5 ? 1 : -1));
+	}
 }

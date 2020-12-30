@@ -65,14 +65,13 @@ public class Spawner : MonoBehaviour
 		location.y = location.z + Random.Range(spawnHeightMin, spawnHeightMax);
 		location.z = temp;
 
-		// Test if point is in camera
-		Vector3 testPoint = GameObject.FindWithTag("MainCamera").GetComponent<Camera>().WorldToViewportPoint(location);
-		if(testPoint.x > 0 && testPoint.x < 1 &&
-				testPoint.y > 0 && testPoint.y < 1 &&
-				testPoint.z > 0)
+		// Don't spawn in other geometry
+		if(Physics.OverlapSphere(location, 1).Length > 0)
 		{
+			Debug.Log("CAN'T SPAWN: " + enemies.ToString() + " HERE");
 			return;
 		}
+
 		Instantiate(enemies, location, Quaternion.identity);
 		spawned++;
 	}

@@ -12,13 +12,14 @@ public class Shooty_Enemy : Enemy
 	protected override void Start()
 	{
 		base.Start();
-		weapon.SetCooldown(20f);
+		weapon.SetCooldown(5f);
+		weapon.SetAccuracy(0);
+		weapon.SetDamage(damage);
 	}
 
 	// Update is called once per frame
 	protected override void Update()
 	{
-		base.Update();
 
 		Vector3 target = player.transform.position;
 		target.y = player.transform.position.y + 20;
@@ -26,15 +27,16 @@ public class Shooty_Enemy : Enemy
 		{
 			this.transform.position = 
 				Vector3.MoveTowards(this.transform.position, target, 
-						GetComponent<NavMeshAgent>().speed * Time.deltaTime);
+						speed * Time.deltaTime);
 		}
 		else
 		{
 			this.transform.position = Vector3.MoveTowards(this.transform.position,
 					this.transform.position + (this.transform.position - player.transform.position).normalized,
-					GetComponent<NavMeshAgent>().speed * Time.deltaTime);
+					speed * Time.deltaTime);
 		}
 
+		base.Update();
 		weapon.Attack();
 	}
 }

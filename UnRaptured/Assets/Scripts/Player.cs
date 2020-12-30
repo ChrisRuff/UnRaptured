@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
 	private bool isGrounded;
 	private float jumpHeight;
 	#endregion
+
 	#region Health Instance Variables
 	public Image damageImage;
 	public Slider healthSlider;
@@ -50,7 +51,7 @@ public class Player : MonoBehaviour
 	public CameraController playerCameraController;
 
 	// points
-	private int points = 0;
+	private int points = 10;
 	public Text pointsUI;
 
 	// Start is called before the first frame update
@@ -255,19 +256,8 @@ public class Player : MonoBehaviour
 	#region PLAYERHEALTHBLOCK
 
 
-
-	private void Test()
-	{
-		if (Input.GetKeyDown(KeyCode.P))
-		{
-			TakeDamage(10);
-		}
-
-	}
-
 	private void HandlePlayerHealth()
 	{
-		Test();
 		if (damaged)
 		{
 			damageImage.color = flashColour;
@@ -358,7 +348,6 @@ public class Player : MonoBehaviour
 		{
 			if (RaycastHit.collider.tag == "UpgradeStation")
 			{
-				Debug.DrawLine(transform.position, rayDirection);
 				isUpgrading = true;
 				isPaused = true;
 			}
@@ -367,33 +356,51 @@ public class Player : MonoBehaviour
 
 	public void UpgradeSpeed()
 	{
-		speed += 100;
+		if(usePoint())
+		{
+			speed += 100;
+		}
 	}
 
 	public void UpgradeJump()
 	{
-		jumpHeight += 10;
+		if(usePoint())
+		{
+			jumpHeight += 10;
+		}
 	}
 
 	public void UpgradeDamage()
 	{
-		weapon.UpdateDamage(10);
+		if(usePoint())
+		{
+			weapon.UpdateDamage(10);
+		}
 	}
 
 	public void UpgradeNumShots()
 	{
-		numShots++;
-		weapon.UpdateAccuracy(-5);
+		if(usePoint())
+		{
+			numShots++;
+			weapon.UpdateAccuracy(-5);
+		}
 	}
 
 	public void UpgradeAccuracy()
 	{
-		weapon.UpdateAccuracy(1);
+		if(usePoint())
+		{
+			weapon.UpdateAccuracy(1);
+		}
 	}
 
 	public void UpgradeFireSpeed()
 	{
-		weapon.UpdateFireSpeed(0.5f);
+		if(usePoint())
+		{
+			weapon.UpdateFireSpeed(0.5f);
+		}
 	}
 
 	#endregion
@@ -403,4 +410,18 @@ public class Player : MonoBehaviour
 		points++;
 		pointsUI.text = points.ToString();
 	}
+	private bool usePoint()
+	{
+		if(points == 0)
+		{
+			Debug.Log("NO POINTS");
+			return false;
+		}
+		points--;
+		pointsUI.text = points.ToString();
+		Debug.Log("Spending points");
+
+		return true;
+	}
+	
 }
